@@ -2,14 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { Movie } from '@/types/movie';
+import { Category } from '@/types/category';
 import { tmdbAPI } from '@/services/tmdb';
 import MovieGrid from '@/components/MovieGrid';
 import SearchBar from '@/components/SearchBar';
 import CategoryFilter from '@/components/CategoryFilter';
 import ErrorState from '@/components/ErrorState';
 import LoadingState from '@/components/LoadingState';
+import { notFound } from 'next/navigation';
 
-export default function HomePage() {
+const validCategories: Category[] = ['now-playing', 'popular', 'top-rated', 'upcoming'];
+
+export default function CategoryPage({
+  params,
+}: {
+  params: { category: string };
+}) {
+  const { category } = params;
   const [movies, setMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -17,10 +26,15 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!validCategories.includes(category as Category)) {
+      notFound();
+      return;
+    }
+
     const fetchMovies = async () => {
       try {
         setIsLoading(true);
-        const response = await tmdbAPI.getGeneralMovies(1);
+        const response = await tmdbAPI.getMovies(category as Category, 1);
         setMovies(response.results);
         setHasMore(page < response.total_pages);
         setError(null);
@@ -32,12 +46,12 @@ export default function HomePage() {
     };
 
     fetchMovies();
-  }, []);
+  }, [category]);
 
   const loadMore = async () => {
     try {
       const nextPage = page + 1;
-      const response = await tmdbAPI.getGeneralMovies(nextPage);
+      const response = await tmdbAPI.getMovies(category as Category, nextPage);
       setMovies((prev) => [...prev, ...response.results]);
       setPage(nextPage);
       setHasMore(nextPage < response.total_pages);
@@ -61,4 +75,4 @@ export default function HomePage() {
       )}
     </div>
   );
-}
+} 

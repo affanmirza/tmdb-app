@@ -1,26 +1,102 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --foreground-rgb: 17, 24, 39;
+  --background-start-rgb: 250, 250, 250;
+  --background-end-rgb: 245, 245, 245;
+  --accent-color: 99, 102, 241;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  body {
+    @apply text-[15px] leading-relaxed;
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+      135deg,
+      rgb(var(--background-start-rgb)),
+      rgb(var(--background-end-rgb))
+    );
+    min-height: 100vh;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  h1 {
+    @apply text-4xl font-semibold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600;
+  }
+
+  h2 {
+    @apply text-2xl font-medium tracking-tight text-gray-800;
+  }
+
+  h3 {
+    @apply text-lg font-medium text-gray-800;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .movie-grid {
+    @apply grid grid-cols-1;
+    @apply sm:grid-cols-2;
+    @apply md:grid-cols-3;
+    @apply lg:grid-cols-4;
+    @apply xl:grid-cols-5;
+    @apply gap-6;
+  }
+
+  .movie-card {
+    @apply bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg transition-all duration-300;
+    @apply hover:scale-105 hover:shadow-gray-400/20;
+    @apply border border-gray-200/80;
+  }
+
+  .movie-card img {
+    @apply w-full h-[400px] object-cover;
+  }
+
+  .movie-card-content {
+    @apply p-4 space-y-2;
+  }
+
+  .movie-card-title {
+    @apply text-lg font-semibold truncate text-gray-800;
+  }
+
+  .movie-card-meta {
+    @apply flex items-center justify-between text-sm text-gray-600;
+  }
+
+  .rating {
+    @apply flex items-center gap-1 text-amber-500;
+  }
+
+  .nav-link {
+    @apply relative px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors;
+  }
+
+  .nav-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-0.5 bg-gray-800 transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .search-input {
+    @apply w-full px-4 py-3 pl-12 bg-white/80 backdrop-blur-sm text-gray-800 rounded-xl;
+    @apply border border-gray-200/80 focus:border-gray-400/80;
+    @apply focus:outline-none focus:ring-2 focus:ring-gray-200/50;
+    @apply transition-all duration-300;
+  }
+
+  .category-button {
+    @apply px-6 py-2.5 rounded-full transition-all duration-300;
+    @apply bg-white/80 backdrop-blur-sm border border-gray-200/80;
+    @apply hover:bg-gray-100/80 hover:border-gray-300/80;
+    @apply focus:outline-none focus:ring-2 focus:ring-gray-200/50;
+  }
+
+  .category-button-active {
+    @apply bg-gray-800 text-white border-gray-800;
+  }
 }
