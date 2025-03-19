@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Movie } from '@/types/movie';
 import { Category } from '@/types/category';
 import { tmdbAPI } from '@/services/tmdb';
@@ -25,28 +25,28 @@ export default function CategoryPage({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchMovies = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await tmdbAPI.getMovies(category as Category, 1);
+      setMovies(response.results);
+      setHasMore(page < response.total_pages);
+      setError(null);
+    } catch {
+      setError('Failed to fetch movies. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [category]);
+
   useEffect(() => {
     if (!validCategories.includes(category as Category)) {
       notFound();
       return;
     }
 
-    const fetchMovies = async () => {
-      try {
-        setIsLoading(true);
-        const response = await tmdbAPI.getMovies(category as Category, 1);
-        setMovies(response.results);
-        setHasMore(page < response.total_pages);
-        setError(null);
-      } catch {
-        setError('Failed to fetch movies. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchMovies();
-  }, [category]);
+  }, [category, fetchMovies]);
 
   const loadMore = async () => {
     try {
